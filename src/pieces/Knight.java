@@ -25,6 +25,42 @@ public class Knight extends ChessPiece{
 				s.addPath();
 			}
 		}
+		if(sqrY+1 <= 7 && sqrX+2 <= 7) {
+			Square s = ChessBoard.map.get(sqrY+1).get(sqrX+2);
+			if((s.hasPiece() && !s.isSameColor()) || !s.hasPiece()) {
+				s.addPath();
+			}
+		}
+		if(sqrY+2 <= 7 && sqrX+1 <= 7) {
+			Square s = ChessBoard.map.get(sqrY+2).get(sqrX+1);
+			if((s.hasPiece() && !s.isSameColor()) || !s.hasPiece()) {
+				s.addPath();
+			}
+		}
+		if(sqrY+2 <= 7 && sqrX-1 >= 0) {
+			Square s = ChessBoard.map.get(sqrY+2).get(sqrX-1);
+			if((s.hasPiece() && !s.isSameColor()) || !s.hasPiece()) {
+				s.addPath();
+			}
+		}
+		if(sqrY+1 <= 7 && sqrX-2 >= 0) {
+			Square s = ChessBoard.map.get(sqrY+1).get(sqrX-2);
+			if((s.hasPiece() && !s.isSameColor()) || !s.hasPiece()) {
+				s.addPath();
+			}
+		}
+		if(sqrY-1 >= 0 && sqrX-2 >= 0) {
+			Square s = ChessBoard.map.get(sqrY-1).get(sqrX-2);
+			if((s.hasPiece() && !s.isSameColor()) || !s.hasPiece()) {
+				s.addPath();
+			}
+		}
+		if(sqrY-2 >= 0 && sqrX-1 >= 0) {
+			Square s = ChessBoard.map.get(sqrY-2).get(sqrX-1);
+			if((s.hasPiece() && !s.isSameColor()) || !s.hasPiece()) {
+				s.addPath();
+			}
+		}
 	}
 }
 
