@@ -23,6 +23,8 @@ public class Square extends Group{
 	private Circle cir;
 	public static ArrayList<Square> pathArr = new ArrayList<Square>();
 
+	public static Color turn = Color.WHITE;
+
 	public Square(int x, int y,Color c) {
 		r = new Rectangle(SIZE,SIZE);
 		r.setFill(c);
@@ -36,34 +38,35 @@ public class Square extends Group{
 		this.getChildren().add(r);
 
 		this.setOnMouseClicked(event->{
-			if(hasPath()) {
+			if(getPieceColor() == turn) {
+				if(hasPiece()) {
+					removeAllPath();
+					if(!selected) {
+						r.setFill(Color.ORANGE);
+						selected = true;
+						if(selectedSquare != null) {
+							selectedSquare.r.setFill(selectedSquare.bgColor);
+							selectedSquare.selected = false;
+						}
+						selectedSquare = this;
+						cp.showPath(this, selectedSquare.getPieceColor());
+					}
+					else {
+						r.setFill(bgColor);
+						selected = false;
+						selectedSquare = null;
+					}
+				}
+			}
+			else if(hasPath()) {
 				if(hasPiece() && !isSameColor()) {
 					removePiece();
 				}
 				if(!isSameColor() || this.getPieceColor() == null) {
-					this.addPiece(selectedSquare.getPiece(), selectedSquare.getPieceColor());
-					selectedSquare.removePiece();
+					movePiece();
 					removeAllPath();
 					selectedSquare.r.setFill(selectedSquare.bgColor);
 					selectedSquare.selected = false;
-				}
-			}
-			else if(hasPiece()) {
-				removeAllPath();
-				if(!selected) {
-					r.setFill(Color.ORANGE);
-					selected = true;
-					if(selectedSquare != null) {
-						selectedSquare.r.setFill(selectedSquare.bgColor);
-						selectedSquare.selected = false;
-					}
-					selectedSquare = this;
-					cp.showPath(this, selectedSquare.getPieceColor());
-				}
-				else {
-					r.setFill(bgColor);
-					selected = false;
-					selectedSquare = null;
 				}
 			}
 		});
@@ -78,6 +81,13 @@ public class Square extends Group{
 		this.getChildren().add(pcs);
 		this.cp = pcs;
 		pieceColor = c;
+	}
+
+	public void movePiece() {
+		this.addPiece(selectedSquare.getPiece(), selectedSquare.getPieceColor());
+		selectedSquare.removePiece();
+		if(turn == Color.WHITE) turn = Color.BLACK;
+		else if(turn == Color.BLACK) turn = Color.WHITE;
 	}
 
 	public ChessPiece getPiece() {
