@@ -14,6 +14,7 @@ public class Pawn extends ChessPiece{
 		int sqrX = sqr.getX();
 		int sqrY = sqr.getY();
 		int moves = 2;
+		//Om bonden färdats minst ett block sänks längden den kan färdas från 2 till 1
 		if((col == Color.BLACK && sqrY >= 2) || (col == Color.WHITE && sqrY <= 5)) moves = 1;
 		for (int i = 1; i <= moves; i++) {
 			if(sqr.getPieceColor() == Color.WHITE) {
@@ -27,6 +28,7 @@ public class Pawn extends ChessPiece{
 				ChessBoard.map.get(sqrY+i).get(sqrX).addPath();
 			}
 		}
+		//Attack, svart bonde åt vänster
 		if(col == Color.BLACK && sqrY+1 <= 7 && sqrX-1 >= 0) {
 			Square s = ChessBoard.map.get(sqrY+1).get(sqrX-1);
 			if(s.hasPiece() && !s.isSameColor()) {
@@ -34,18 +36,21 @@ public class Pawn extends ChessPiece{
 				
 			}
 		}
+		//Attack, svart bonde åt höger
 		if(col == Color.BLACK && sqrY+1 <= 7 && sqrX+1 <= 7) {
 			Square s = ChessBoard.map.get(sqrY+1).get(sqrX+1);
 			if(s.hasPiece() && !s.isSameColor()) {
 				s.addPath();
 			}
 		}
+		//Attack, vit bonde åt vänster
 		if(col == Color.WHITE && sqrY-1 >= 0 && sqrX-1 >= 0) {
 			Square s = ChessBoard.map.get(sqrY-1).get(sqrX-1);
 			if(s.hasPiece() && !s.isSameColor()) {
 				s.addPath();
 			}
 		}
+		//Attack, vit bonde åt höger
 		if(col == Color.WHITE && sqrY-1 >= 0 && sqrX+1 <= 7) {
 			Square s = ChessBoard.map.get(sqrY-1).get(sqrX+1);
 			if(s.hasPiece() && !s.isSameColor()) {

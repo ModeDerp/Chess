@@ -12,6 +12,7 @@ public class Bishop extends ChessPiece{
 	public void showPath(Square sqr,Color c) {
 		int sqrX = sqr.getX();
 		int sqrY = sqr.getY();
+		//Löparens path upp och åt vänster
 		for (int i = 1; i < 8; i++) {
 			if(sqrY-i < 0 || sqrX-i < 0) break;
 			Square s = ChessBoard.map.get(sqrY-i).get(sqrX-i);
@@ -22,6 +23,7 @@ public class Bishop extends ChessPiece{
 			}
 			s.addPath();
 		}
+		//Löparens path upp och åt höger
 		for (int i = 1; i < 8; i++) {
 			if(sqrY-i < 0 || sqrX+i > 7) break;
 			Square s = ChessBoard.map.get(sqrY-i).get(sqrX+i);
@@ -32,6 +34,7 @@ public class Bishop extends ChessPiece{
 			}
 			s.addPath();
 		}
+		//Löparens path ner och åt höger
 		for (int i = 1; i < 8; i++) {
 			if(sqrY+i > 7 || sqrX+i > 7) break;
 			Square s = ChessBoard.map.get(sqrY+i).get(sqrX+i);
@@ -42,6 +45,7 @@ public class Bishop extends ChessPiece{
 			}
 			s.addPath();
 		}
+		//Löparens path ner och åt vänster
 		for (int i = 1; i < 8; i++) {
 			if(sqrY+i > 7 || sqrX-i < 0) break;
 			Square s = ChessBoard.map.get(sqrY+i).get(sqrX-i);
