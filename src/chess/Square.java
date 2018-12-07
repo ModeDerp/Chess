@@ -36,38 +36,47 @@ public class Square extends Group{
 		ypos = y;
 
 		this.getChildren().add(r);
-
+		
+		//Om man klickar på en ruta
 		this.setOnMouseClicked(event->{
-			if(getPieceColor() == turn) {
-				if(hasPiece()) {
-					removeAllPath();
-					if(!selected) {
-						r.setFill(Color.ORANGE);
-						selected = true;
-						if(selectedSquare != null) {
-							selectedSquare.r.setFill(selectedSquare.bgColor);
-							selectedSquare.selected = false;
-						}
-						selectedSquare = this;
-						cp.showPath(this, selectedSquare.getPieceColor());
+			//Kollar om man klickat på en pjäs och om pjäsen har samma färg som "turn" vilket är variabeln som håller koll på vems tur det är
+			if(hasPiece() && getPieceColor() == turn) {
+				removeAllPath();
+				//Om rutan man klickar på inte är vald väljs den
+				if(!selected) {
+					r.setFill(Color.ORANGE);
+					selected = true;
+					//Om det finns en selectedsquare alltså en vald ruta återställs den
+					if(selectedSquare != null) {
+						selectedSquare.r.setFill(selectedSquare.bgColor);
+						selectedSquare.selected = false;
 					}
-					else {
-						r.setFill(bgColor);
-						selected = false;
-						selectedSquare = null;
-					}
+					selectedSquare = this;
+					cp.showPath(this, selectedSquare.getPieceColor());
+				}
+				//Återställer rutan, detta gör så att man kan klicka på den valda rutan för att återställa den
+				else {
+					r.setFill(bgColor);
+					selected = false;
+					selectedSquare = null;
 				}
 			}
+			//Om istället har klickat på en ruta med "path"
 			else if(hasPath()) {
-				if(hasPiece() && !isSameColor()) {
-					removePiece();
-				}
+				//Om rutan man klickar på har en pjäs av annan färg eller ingen pjäs
 				if(!isSameColor() || this.getPieceColor() == null) {
+					removePiece(); //Tar bort eventuella pjäser av annan färg, dock måste det inte finnas en pjäs att ta bort
 					movePiece();
 					removeAllPath();
 					selectedSquare.r.setFill(selectedSquare.bgColor);
 					selectedSquare.selected = false;
 				}
+			}
+			//Om man klickat på en ruta utan path och pjäs, alltså en tom ruta, återställs den valda rutan om en sådan finns
+			else if(selectedSquare != null) {
+				selectedSquare.r.setFill(selectedSquare.bgColor);
+				selectedSquare.selected = false;
+				removeAllPath();
 			}
 		});
 	}
@@ -77,6 +86,7 @@ public class Square extends Group{
 	}
 
 	public void addPiece(ChessPiece pcs, Color c) {
+		//Om en bonde har tagit sig över planen blir den en drottning
 		if(((c == Color.BLACK && ypos == 7) || (c == Color.WHITE && ypos == 0)) && pcs instanceof Pawn) pcs = new Queen(c);
 		this.getChildren().add(pcs);
 		this.cp = pcs;
@@ -141,5 +151,4 @@ public class Square extends Group{
 		}
 		else return false;
 	}
-
 }
