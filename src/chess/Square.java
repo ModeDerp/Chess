@@ -36,7 +36,7 @@ public class Square extends Group{
 		ypos = y;
 
 		this.getChildren().add(r);
-		
+
 		//Om man klickar på en ruta
 		this.setOnMouseClicked(event->{
 			//Kollar om man klickat på en pjäs och om pjäsen har samma färg som "turn" vilket är variabeln som håller koll på vems tur det är
@@ -80,11 +80,20 @@ public class Square extends Group{
 			}
 		});
 	}
-
+	
+	/**
+	 * Kollar om den Square som kallar metoden har en pjäs
+	 * @return Boolean
+	 */
 	public boolean hasPiece() {
 		return this.cp != null;
 	}
 
+	/**
+	 * Lägger till en pjäs på den Square som kallar metoden
+	 * @param pcs pjäs objektet
+	 * @param c färgen på pjäsen
+	 */
 	public void addPiece(ChessPiece pcs, Color c) {
 		//Om en bonde har tagit sig över planen blir den en drottning
 		if(((c == Color.BLACK && ypos == 7) || (c == Color.WHITE && ypos == 0)) && pcs instanceof Pawn) pcs = new Queen(c);
@@ -92,7 +101,10 @@ public class Square extends Group{
 		this.cp = pcs;
 		pieceColor = c;
 	}
-
+	
+	/**
+	 * Flyttar en pjäs genom att ta bort den pjäs som finns i den Square som finns i variabeln selectedSquare och lägga till en av samma typ i den Square som kalla metoden
+	 */
 	public void movePiece() {
 		this.addPiece(selectedSquare.getPiece(), selectedSquare.getPieceColor());
 		selectedSquare.removePiece();
@@ -100,21 +112,41 @@ public class Square extends Group{
 		else if(turn == Color.BLACK) turn = Color.WHITE;
 	}
 
+	/**
+	 * Returnerar ChessPiece av den Square som kallar metoden
+	 * @return ChessPiece
+	 */
 	public ChessPiece getPiece() {
 		return this.cp;
 	}
 
+	/**
+	 * Returnerar x värdet av den Square som kallar metoden
+	 * @return int x
+	 */
 	public int getX() {
 		return this.xpos;
 	}
 
+	/**
+	 * Returnerar y värdet av den Square som kallar metoden
+	 * @return int y
+	 */
 	public int getY() {
 		return this.ypos;
 	}
 
+	/**
+	 * Returnerar färgen av pjäsen inom den Square som kallar metoden
+	 * @return Color c av en en pjäs
+	 */
 	public Color getPieceColor() {
 		return this.pieceColor;
 	}
+	
+	/**
+	 * Lägger till en ny "path" på den Square som kallar metoden
+	 */
 	public void addPath() {
 		cir = new Circle(10);
 		cir.setTranslateX(SIZE/2);
@@ -124,15 +156,25 @@ public class Square extends Group{
 		pathArr.add(this);
 	}
 
+	/**
+	 * Kollar om den Square som kallar metoden har en "path"
+	 * @return Boolean 
+	 */
 	public boolean hasPath() {
 		return this.cir != null;
 	}
 
-	public void removeIndPath() {
+	/**
+	 * Tar bort individuell path på den Square som kallar metoden
+	 */
+	private void removeIndPath() {
 		this.getChildren().remove(cir);
 		cir = null;
 	}
 
+	/**
+	 * Tar bort all path genom att kalla på metoden removeIndPath() för varje path i arrayen pathArr
+	 */
 	public void removeAllPath() {
 		for (Square sqr : pathArr) {
 			sqr.removeIndPath();
@@ -140,11 +182,19 @@ public class Square extends Group{
 		pathArr.clear();
 	}
 
+	/**
+	 * Tar bort pjäsen av den Square som kallar metoden
+	 */
 	public void removePiece() {
 		this.getChildren().remove(cp);
 		cp = null;
 		pieceColor = null;
 	}
+
+	/**
+	 * Jämför färgen av den pjäs av den Square som kallar metoden mot färgen av pjäsen av den Square som finns i variabeln selectedSquare
+	 * @return Boolean
+	 */
 	public boolean isSameColor() {
 		if(getPieceColor() == selectedSquare.getPieceColor()) {
 			return true;
