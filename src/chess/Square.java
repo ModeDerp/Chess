@@ -6,6 +6,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import pieces.ChessPiece;
+import pieces.King;
 import pieces.Pawn;
 import pieces.Queen;
 
@@ -24,6 +25,8 @@ public class Square extends Group{
 	public static ArrayList<Square> pathArr = new ArrayList<Square>();
 
 	public static Color turn = Color.WHITE;
+	public static Boolean chess = false;
+	public static Boolean won = false;
 
 	public Square(int x, int y,Color c) {
 		r = new Rectangle(SIZE,SIZE);
@@ -39,6 +42,7 @@ public class Square extends Group{
 
 		//Om man klickar på en ruta
 		this.setOnMouseClicked(event->{
+			if(won == true) return;
 			//Kollar om man klickat på en pjäs och om pjäsen har samma färg som "turn" vilket är variabeln som håller koll på vems tur det är
 			if(hasPiece() && getPieceColor() == turn) {
 				removeAllPath();
@@ -52,7 +56,10 @@ public class Square extends Group{
 						selectedSquare.selected = false;
 					}
 					selectedSquare = this;
-					cp.showPath(this, selectedSquare.getPieceColor());
+					ArrayList<Square> sqrArr = cp.returnPath(this,selectedSquare.getPieceColor());
+					for (Square square : sqrArr) {
+						square.addPath();
+					}
 				}
 				//Återställer rutan, detta gör så att man kan klicka på den valda rutan för att återställa den
 				else {
@@ -60,11 +67,22 @@ public class Square extends Group{
 					selected = false;
 					selectedSquare = null;
 				}
+				if(isSquareCheck(this , turn)) System.out.println("Check!!");
+				else System.out.println("Not Check!!");
 			}
 			//Om istället har klickat på en ruta med "path"
 			else if(hasPath()) {
 				//Om rutan man klickar på har en pjäs av annan färg eller ingen pjäs
 				if(!isSameColor() || this.getPieceColor() == null) {
+					if(cp instanceof King) {
+						won = true;
+						if(turn == Color.WHITE) {
+							System.out.println("White Won");
+						}
+						else if(turn == Color.BLACK) {
+							System.out.println("Black Won");
+						}
+					}
 					removePiece(); //Tar bort eventuella pjäser av annan färg, dock måste det inte finnas en pjäs att ta bort
 					movePiece();
 					removeAllPath();
@@ -108,8 +126,27 @@ public class Square extends Group{
 	public void movePiece() {
 		this.addPiece(selectedSquare.getPiece(), selectedSquare.getPieceColor());
 		selectedSquare.removePiece();
-		if(turn == Color.WHITE) turn = Color.BLACK;
-		else if(turn == Color.BLACK) turn = Color.WHITE;
+		changeTurn();
+	}
+	
+	/**
+	 * Byter tur mellan svart och vit och skriver ut vems tur det är.
+	 */
+	
+	public void changeTurn() {
+		if(won == true) return;
+		if(check() == Color.BLACK) System.out.println("Check, Black King");
+		if(check() == Color.WHITE) System.out.println("Check, White King");
+		if(turn == Color.WHITE) {
+			turn = Color.BLACK;
+			System.out.println("Black's Turn");
+			System.out.println("------------");
+		}
+		else if(turn == Color.BLACK) {
+			turn = Color.WHITE;
+			System.out.println("White's Turn");
+			System.out.println("------------");
+		}
 	}
 
 	/**
@@ -167,7 +204,7 @@ public class Square extends Group{
 	/**
 	 * Tar bort individuell path på den Square som kallar metoden
 	 */
-	private void removeIndPath() {
+	public void removeIndPath() {
 		this.getChildren().remove(cir);
 		cir = null;
 	}
@@ -200,5 +237,48 @@ public class Square extends Group{
 			return true;
 		}
 		else return false;
+	}
+	
+	public Color check() {
+		Color king = null;
+		for (ArrayList<Square> list : ChessBoard.map) {
+			for (Square s : list) {
+				if(s.hasPiece()) {
+					ArrayList<Square> s2 = s.getPiece().returnPath(s, s.getPieceColor());
+					for (Square s3 : s2) {
+						if((s3.getPiece() instanceof King) && (s3.getPieceColor() != s.getPieceColor())) king = s3.getPieceColor();
+					}
+				}
+			}
+		}
+		return king;
+	}
+	public Boolean isKingCheck(Color c) {
+		if(c == check()) return true;
+		else return false;
+	}
+	public Boolean isSquareCheck(Square sqr, Color turnCol) {
+		sqr.r.setFill(Color.BLUE);
+		Boolean bool = false;
+		for (ArrayList<Square> list : ChessBoard.map) {
+			for (Square s : list) {
+				
+				if(s.hasPiece() && (s.getPieceColor() != turnCol)) {
+					ArrayList<Square> s2 = s.getPiece().returnPath(s, s.getPieceColor());
+					for (Square s3 : s2) {
+						s3.r.setFill(Color.YELLOW);
+						if(s3.xpos == sqr.xpos) {
+							System.out.println(s3.ypos);
+						}
+						if((s3 == sqr)) {
+							bool = true;
+							System.out.println("BOOL");
+							}
+					}
+				}
+			}
+		}
+		System.out.println(bool);
+		return bool;
 	}
 }

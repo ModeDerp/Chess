@@ -1,5 +1,7 @@
 package pieces;
 
+import java.util.ArrayList;
+
 import chess.Square;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
@@ -9,7 +11,7 @@ import javafx.scene.paint.Color;
 public abstract class ChessPiece extends Group{
 
 	public ChessPiece(Color c) {
-		
+
 		String name = this.getClass().getSimpleName().toUpperCase();
 		String src;
 		if(c == Color.BLACK) {
@@ -24,6 +26,6 @@ public abstract class ChessPiece extends Group{
 		iv.setFitWidth(Square.SIZE);
 		this.getChildren().add(iv);
 	}
-	
-	public abstract void showPath(Square sqr, Color col);
+
+	public abstract ArrayList<Square> returnPath(Square sqr, Color col);
 }

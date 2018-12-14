@@ -92,6 +92,9 @@ public class ChessBoard extends Group{
 				else if(y == 7 && (x == 3)) {
 					ChessPiece pcs = new Queen(Color.WHITE);
 					sqr.addPiece(pcs, Color.WHITE);
+				}else if(y == 2 && (x == 3)) {
+					ChessPiece pcs = new Queen(Color.WHITE);
+					sqr.addPiece(pcs, Color.WHITE);
 				}
 			}			
 			map.add(row);
