@@ -47,11 +47,11 @@ public class ChessBoard extends Group{
 				
 				if(y == 1) {
 					ChessPiece pcs = new Pawn(Color.BLACK);
-					sqr.addPiece(pcs, Color.BLACK);
+					//sqr.addPiece(pcs, Color.BLACK);
 				}
 				else if(y == 6) {
 					ChessPiece pcs = new Pawn(Color.WHITE);
-					sqr.addPiece(pcs, Color.WHITE);
+					//sqr.addPiece(pcs, Color.WHITE);
 				}
 				else if(y == 0 && (x == 0 || x == 7)) {
 					ChessPiece pcs = new Rook(Color.BLACK);
@@ -92,7 +92,7 @@ public class ChessBoard extends Group{
 				else if(y == 7 && (x == 3)) {
 					ChessPiece pcs = new Queen(Color.WHITE);
 					sqr.addPiece(pcs, Color.WHITE);
-				}else if(y == 2 && (x == 3)) {
+				}else if(y == 7 && (x == 3)) {
 					ChessPiece pcs = new Queen(Color.WHITE);
 					sqr.addPiece(pcs, Color.WHITE);
 				}

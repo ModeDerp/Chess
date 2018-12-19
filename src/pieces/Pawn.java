@@ -40,28 +40,28 @@ public class Pawn extends ChessPiece{
 		//Attack, svart bonde åt vänster
 		if(c == Color.BLACK && sqrY+1 <= 7 && sqrX-1 >= 0) {
 			Square s = ChessBoard.map.get(sqrY+1).get(sqrX-1);
-			if(s.hasPiece() && !s.isSameColor()) {
+			if(s.hasPiece()) {
 				sqrArr.add(s);
 			}
 		}
 		//Attack, svart bonde åt höger
 		if(c == Color.BLACK && sqrY+1 <= 7 && sqrX+1 <= 7) {
 			Square s = ChessBoard.map.get(sqrY+1).get(sqrX+1);
-			if(s.hasPiece() && !s.isSameColor()) {
+			if(s.hasPiece()) {
 				sqrArr.add(s);
 			}
 		}
 		//Attack, vit bonde åt vänster
 		if(c == Color.WHITE && sqrY-1 >= 0 && sqrX-1 >= 0) {
 			Square s = ChessBoard.map.get(sqrY-1).get(sqrX-1);
-			if(s.hasPiece() && !s.isSameColor()) {
+			if(s.hasPiece()) {
 				sqrArr.add(s);
 			}
 		}
 		//Attack, vit bonde åt höger
 		if(c == Color.WHITE && sqrY-1 >= 0 && sqrX+1 <= 7) {
 			Square s = ChessBoard.map.get(sqrY-1).get(sqrX+1);
-			if(s.hasPiece() && !s.isSameColor()) {
+			if(s.hasPiece()) {
 				sqrArr.add(s);
 			}
 		}

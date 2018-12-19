@@ -22,11 +22,15 @@ public class Square extends Group{
 	private int xpos;
 	private int ypos;
 	private Circle cir;
+	private Circle castleCir;
 	public static ArrayList<Square> pathArr = new ArrayList<Square>();
+	public static ArrayList<Square> castleArr = new ArrayList<Square>();
 
 	public static Color turn = Color.WHITE;
 	public static Boolean chess = false;
 	public static Boolean won = false;
+	public static Boolean whiteKingHasMoved = false;
+	public static Boolean blackKingHasMoved = false;
 
 	public Square(int x, int y,Color c) {
 		r = new Rectangle(SIZE,SIZE);
@@ -42,33 +46,41 @@ public class Square extends Group{
 
 		//Om man klickar på en ruta
 		this.setOnMouseClicked(event->{
+			System.out.println("Du klickade på: " + this.getX() + ", " + this.getY());
+
 			if(won == true) return;
 			//Kollar om man klickat på en pjäs och om pjäsen har samma färg som "turn" vilket är variabeln som håller koll på vems tur det är
 			if(hasPiece() && getPieceColor() == turn) {
-				removeAllPath();
+				if(hasCastlePath()) {
+					doCastling();
+					removeAllPath();
+					resetSquare(selectedSquare);
+				}
 				//Om rutan man klickar på inte är vald väljs den
-				if(!selected) {
+				else if(!selected) {
+					removeAllPath();
+					resetSquare(selectedSquare);
 					r.setFill(Color.ORANGE);
 					selected = true;
-					//Om det finns en selectedsquare alltså en vald ruta återställs den
-					if(selectedSquare != null) {
-						selectedSquare.r.setFill(selectedSquare.bgColor);
-						selectedSquare.selected = false;
-					}
 					selectedSquare = this;
+					if(cp instanceof King){
+						ArrayList<Square> sqrArr = ((King) cp).tryCastle(this);
+						for (Square square : sqrArr) {
+							square.addCastlePath();
+						}
+					}
 					ArrayList<Square> sqrArr = cp.returnPath(this,selectedSquare.getPieceColor());
 					for (Square square : sqrArr) {
-						square.addPath();
+						if(square.getPieceColor() != selectedSquare.getPieceColor()) {
+							square.addPath();
+						}
 					}
 				}
 				//Återställer rutan, detta gör så att man kan klicka på den valda rutan för att återställa den
 				else {
-					r.setFill(bgColor);
-					selected = false;
-					selectedSquare = null;
+					removeAllPath();
+					resetSquare(this);
 				}
-				if(isSquareCheck(this , turn)) System.out.println("Check!!");
-				else System.out.println("Not Check!!");
 			}
 			//Om istället har klickat på en ruta med "path"
 			else if(hasPath()) {
@@ -84,21 +96,20 @@ public class Square extends Group{
 						}
 					}
 					removePiece(); //Tar bort eventuella pjäser av annan färg, dock måste det inte finnas en pjäs att ta bort
-					movePiece();
+					movePiece(selectedSquare,this);
+					changeTurn();
 					removeAllPath();
-					selectedSquare.r.setFill(selectedSquare.bgColor);
-					selectedSquare.selected = false;
+					resetSquare(selectedSquare);
 				}
 			}
 			//Om man klickat på en ruta utan path och pjäs, alltså en tom ruta, återställs den valda rutan om en sådan finns
 			else if(selectedSquare != null) {
-				selectedSquare.r.setFill(selectedSquare.bgColor);
-				selectedSquare.selected = false;
+				resetSquare(selectedSquare);
 				removeAllPath();
 			}
 		});
 	}
-	
+
 	/**
 	 * Kollar om den Square som kallar metoden har en pjäs
 	 * @return Boolean
@@ -119,20 +130,23 @@ public class Square extends Group{
 		this.cp = pcs;
 		pieceColor = c;
 	}
-	
+
 	/**
 	 * Flyttar en pjäs genom att ta bort den pjäs som finns i den Square som finns i variabeln selectedSquare och lägga till en av samma typ i den Square som kalla metoden
 	 */
-	public void movePiece() {
-		this.addPiece(selectedSquare.getPiece(), selectedSquare.getPieceColor());
-		selectedSquare.removePiece();
-		changeTurn();
+	public void movePiece(Square fromSqr, Square toSqr) {
+		if(fromSqr.getPiece() instanceof King) {
+			if(turn == Color.WHITE) whiteKingHasMoved = true;
+			else if(turn == Color.BLACK) blackKingHasMoved = true;
+		}
+		toSqr.addPiece(fromSqr.getPiece(), fromSqr.getPieceColor());
+		fromSqr.removePiece();
 	}
-	
+
 	/**
 	 * Byter tur mellan svart och vit och skriver ut vems tur det är.
 	 */
-	
+
 	public void changeTurn() {
 		if(won == true) return;
 		if(check() == Color.BLACK) System.out.println("Check, Black King");
@@ -180,7 +194,7 @@ public class Square extends Group{
 	public Color getPieceColor() {
 		return this.pieceColor;
 	}
-	
+
 	/**
 	 * Lägger till en ny "path" på den Square som kallar metoden
 	 */
@@ -209,6 +223,11 @@ public class Square extends Group{
 		cir = null;
 	}
 
+	public void removeIndCastlePath() {
+		this.getChildren().remove(castleCir);
+		castleCir = null;
+	}
+
 	/**
 	 * Tar bort all path genom att kalla på metoden removeIndPath() för varje path i arrayen pathArr
 	 */
@@ -217,6 +236,10 @@ public class Square extends Group{
 			sqr.removeIndPath();
 		}
 		pathArr.clear();
+		for (Square sqr : castleArr) {
+			sqr.removeIndCastlePath();
+		}
+		castleArr.clear();
 	}
 
 	/**
@@ -226,6 +249,23 @@ public class Square extends Group{
 		this.getChildren().remove(cp);
 		cp = null;
 		pieceColor = null;
+	}
+
+	public void resetSquare(Square sqr) {
+		if(sqr == null) return;
+		sqr.r.setFill(sqr.bgColor);
+		if(selectedSquare != null) {
+			selectedSquare.selected = false;
+			selectedSquare = null;
+		}
+	}
+
+	public void resetBoard() {
+		for (ArrayList<Square> list : ChessBoard.map) {
+			for (Square s : list) {
+				resetSquare(s);
+			}
+		}
 	}
 
 	/**
@@ -238,7 +278,7 @@ public class Square extends Group{
 		}
 		else return false;
 	}
-	
+
 	public Color check() {
 		Color king = null;
 		for (ArrayList<Square> list : ChessBoard.map) {
@@ -257,28 +297,50 @@ public class Square extends Group{
 		if(c == check()) return true;
 		else return false;
 	}
-	public Boolean isSquareCheck(Square sqr, Color turnCol) {
-		sqr.r.setFill(Color.BLUE);
+	public Boolean isSquareCheck() {
 		Boolean bool = false;
 		for (ArrayList<Square> list : ChessBoard.map) {
 			for (Square s : list) {
-				
-				if(s.hasPiece() && (s.getPieceColor() != turnCol)) {
+				if(s.hasPiece() && s.getPieceColor() != turn) {
 					ArrayList<Square> s2 = s.getPiece().returnPath(s, s.getPieceColor());
 					for (Square s3 : s2) {
-						s3.r.setFill(Color.YELLOW);
-						if(s3.xpos == sqr.xpos) {
-							System.out.println(s3.ypos);
-						}
-						if((s3 == sqr)) {
+						if((s3 == this)) {
 							bool = true;
-							System.out.println("BOOL");
-							}
+							//System.out.println("Check : " + s.getPiece() + " : " + s.getX() + ", " + s.getY());
+						}
 					}
 				}
 			}
 		}
-		System.out.println(bool);
 		return bool;
+	}
+	public void addCastlePath() {
+		castleCir = new Circle(10);
+		castleCir.setTranslateX(SIZE/2);
+		castleCir.setTranslateY(SIZE/2);
+		castleCir.setFill(Color.BLUE);
+		this.getChildren().add(castleCir);
+		castleArr.add(this);
+	}
+	public boolean hasCastlePath() {
+		return this.castleCir != null;
+	}
+	public void doCastling() {
+		if(xpos+3 < 7) {
+			if(ChessBoard.map.get(ypos).get(xpos+3).getPiece() instanceof King && ChessBoard.map.get(ypos).get(xpos+3).getPieceColor() == turn) {
+				movePiece(ChessBoard.map.get(ypos).get(xpos+3),ChessBoard.map.get(ypos).get(xpos+1));
+				movePiece(this,ChessBoard.map.get(ypos).get(xpos+2));
+				changeTurn();
+				removeAllPath();
+			}
+		}
+		if(xpos-3 > 0) {
+			if(ChessBoard.map.get(ypos).get(xpos-3).getPiece() instanceof King && ChessBoard.map.get(ypos).get(xpos-3).getPieceColor() == turn) {
+				movePiece(ChessBoard.map.get(ypos).get(xpos-3),ChessBoard.map.get(ypos).get(xpos-1));
+				movePiece(this,ChessBoard.map.get(ypos).get(xpos-2));
+				changeTurn();
+				removeAllPath();
+			}
+		}
 	}
 }

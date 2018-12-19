@@ -9,6 +9,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 
 public abstract class ChessPiece extends Group{
+	
+	
+	
 
 	public ChessPiece(Color c) {
 
