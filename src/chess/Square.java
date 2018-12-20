@@ -326,10 +326,10 @@ public class Square extends Group{
 		return this.castleCir != null;
 	}
 	public void doCastling() {
-		if(xpos+3 < 7) {
-			if(ChessBoard.map.get(ypos).get(xpos+3).getPiece() instanceof King && ChessBoard.map.get(ypos).get(xpos+3).getPieceColor() == turn) {
-				movePiece(ChessBoard.map.get(ypos).get(xpos+3),ChessBoard.map.get(ypos).get(xpos+1));
-				movePiece(this,ChessBoard.map.get(ypos).get(xpos+2));
+		if(xpos+4 < 7) {
+			if(ChessBoard.map.get(ypos).get(xpos+4).getPiece() instanceof King && ChessBoard.map.get(ypos).get(xpos+4).getPieceColor() == turn) {
+				movePiece(ChessBoard.map.get(ypos).get(xpos+4),ChessBoard.map.get(ypos).get(xpos+2));
+				movePiece(this,ChessBoard.map.get(ypos).get(xpos+3));
 				changeTurn();
 				removeAllPath();
 			}

@@ -72,10 +72,10 @@ public class King extends ChessPiece{
 					}
 				}
 			}
-			if(ChessBoard.map.get(sqrY).get(sqrX-3).getPiece() instanceof Rook) {
-				if(!ChessBoard.map.get(sqrY).get(sqrX).isSquareCheck() && !ChessBoard.map.get(sqrY).get(sqrX-1).isSquareCheck() && !ChessBoard.map.get(sqrY).get(sqrX-2).isSquareCheck()) {
-					if(!ChessBoard.map.get(sqrY).get(sqrX-1).hasPiece() && !ChessBoard.map.get(sqrY).get(sqrX-2).hasPiece()) {
-						sqrArr.add(ChessBoard.map.get(sqrY).get(sqrX-3));
+			if(ChessBoard.map.get(sqrY).get(sqrX-4).getPiece() instanceof Rook) {
+				if(!ChessBoard.map.get(sqrY).get(sqrX-1).hasPiece() && !ChessBoard.map.get(sqrY).get(sqrX-2).hasPiece() && !ChessBoard.map.get(sqrY).get(sqrX-3).hasPiece()) {
+					if(!ChessBoard.map.get(sqrY).get(sqrX).isSquareCheck() && !ChessBoard.map.get(sqrY).get(sqrX-1).isSquareCheck() && !ChessBoard.map.get(sqrY).get(sqrX-2).isSquareCheck() && !ChessBoard.map.get(sqrY).get(sqrX-3).isSquareCheck()) {
+						sqrArr.add(ChessBoard.map.get(sqrY).get(sqrX-4));
 					}
 				}
 			}
